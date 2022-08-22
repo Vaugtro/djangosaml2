@@ -569,7 +569,7 @@ class AssertionConsumerServiceView(SPConfigMixin, View):
             )
 
         auth.login(self.request, user)
-        _set_subject_id(request.saml_session, session_info["ava"]["eduPersonTargetedID"])
+        _set_subject_id(request.saml_session, session_info["ava"]["eduPersonTargetedID"][0])
         logger.debug("User %s authenticated via SSO.", user)
 
         self.post_login_hook(request, user, session_info)

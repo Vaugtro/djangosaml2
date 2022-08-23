@@ -55,7 +55,7 @@ from saml2.response import (
     UnsolicitedResponse,
 )
 from saml2.s_utils import UnsupportedBinding
-from saml2.saml import SCM_BEARER
+from saml2.saml import SCM_BEARER, NameID
 from saml2.samlp import AuthnRequest, IDPEntry, IDPList, Scoping
 from saml2.sigver import MissingKey
 from saml2.validate import ResponseLifetimeExceed, ToEarly
@@ -569,7 +569,11 @@ class AssertionConsumerServiceView(SPConfigMixin, View):
             )
 
         auth.login(self.request, user)
-        _set_subject_id(request.saml_session, session_info["ava"]["eduPersonTargetedID"][0])
+        session_info['name_id'] = NameID(name_qualifier="https://ifg-srv-cafe.ifg.edu.br/idp/shibboleth",
+                                        sp_name_qualifier="https://api.ifgtrabalho.bcc.anapolis.ifg.edu.br/api/saml2/metadata/",
+                                        format=saml2.saml.NAMEID_FORMAT_PERSISTENT,
+                                        text=session_info["ava"]["eduPersonTargetedID"][0])
+        _set_subject_id(request.saml_session, session_info['name_id'])
         logger.debug("User %s authenticated via SSO.", user)
 
         self.post_login_hook(request, user, session_info)

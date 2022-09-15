@@ -580,9 +580,9 @@ class AssertionConsumerServiceView(SPConfigMixin, View):
         self.customize_session(user, session_info)
 
         relay_state = self.build_relay_state()
-        custom_redirect_url = self.custom_redirect(user, relay_state, session_info)
-        if custom_redirect_url:
-            return HttpResponseRedirect(custom_redirect_url)
+        custom_redirect = self.custom_redirect(user, relay_state, session_info)
+        if custom_redirect:
+            return custom_redirect
         relay_state = validate_referral_url(request, relay_state)
         logger.debug("Redirecting to the RelayState: %s", relay_state)
         return HttpResponseRedirect(relay_state)
@@ -609,7 +609,7 @@ class AssertionConsumerServiceView(SPConfigMixin, View):
         """Subclasses may override this method to implement custom logic for relay state."""
         return relay_state
 
-    def custom_redirect(self, user, relay_state: str, session_info) -> str:
+    def custom_redirect(self, user, relay_state: str, session_info):
         """Subclasses may override this method to implement custom logic for redirect.
 
         For example, some sites may require user registration if the user has not

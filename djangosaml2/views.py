@@ -580,9 +580,7 @@ class AssertionConsumerServiceView(SPConfigMixin, View):
         self.customize_session(user, session_info)
 
         relay_state = self.build_relay_state()
-        custom_redirect = self.custom_redirect(user, relay_state, session_info)
-        if custom_redirect:
-            return custom_redirect
+        return self.custom_redirect(user, relay_state, session_info)
         relay_state = validate_referral_url(request, relay_state)
         logger.debug("Redirecting to the RelayState: %s", relay_state)
         return HttpResponseRedirect(relay_state)
